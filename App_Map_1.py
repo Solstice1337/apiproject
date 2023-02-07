@@ -32,7 +32,6 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
 
 
-
 class Example(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super().__init__()
