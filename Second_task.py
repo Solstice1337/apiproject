@@ -37,6 +37,11 @@ class MyWidget(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
+        self.z = '0'
+        self.lon = '37.620070'
+        self.lat = '55.753630'
+        self.peredvig_up_down = 0
+        self.peredvig_right_left = 0
         self.getImage()
 
     def Update_Picture(self):
@@ -44,14 +49,39 @@ class MyWidget(QMainWindow, Ui_MainWindow):
         self.Picture_place.setPixmap(self.pixmap)
 
     def getImage(self):
-        map_request = "http://static-maps.yandex.ru/1.x/?ll=37.530887,55.703118&spn=0.002,0.002&l=map&z=0"
-        response = requests.get(map_request)
+        api_server = "http://static-maps.yandex.ru/1.x/"
+        params = {
+            "ll": ",".join([self.lon,self.lat]),
+            "l": 'map',
+            "apikey": "40d1649f-0493-4b70-98ba-98533de7710b"
+        }
+        response = requests.get(api_server,params=params)
         if not response:
             self.Picture_place.setText('Ошибка выполнения запроса')
         self.map_file = "map.png"
         with open(self.map_file, "wb") as file:
             file.write(response.content)
         self.Update_Picture()
+
+    def keyPressEvent(self, event):
+        if event.key() == QtCore.Qt.Key_D:
+            if self.peredvig_up_down <= 20:
+                self.lon = str(float(self.lon) + 1)
+                self.peredvig_up_down += 1
+        if event.key() == QtCore.Qt.Key_A:
+            if self.peredvig_up_down >= -20:
+                self.lon = str(float(self.lon) - 1)
+                self.peredvig_up_down -= 1
+        if event.key() == QtCore.Qt.Key_W:
+            if self.peredvig_right_left <= 20:
+                self.lat = str(float(self.lat) + 1)
+                self.peredvig_right_left += 1
+        if event.key() == QtCore.Qt.Key_S:
+            if self.peredvig_right_left >= -20:
+                self.lat = str(float(self.lat) - 1)
+                self.peredvig_right_left -= 1
+        self.getImage()
+        event.accept()
 
 
 if __name__ == '__main__':
