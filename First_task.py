@@ -240,9 +240,8 @@ class MyWidget(QMainWindow, Ui_MainWindow):
         super().__init__()
         self.setupUi(self)
         self.pushButton.clicked.connect(self.Metka_Show)
-        self.pushButton_2.clicked.connect(self.getImage)
+        self.pushButton_2.clicked.connect(self.Coordinates)
         self.Coordinates()
-        self.getImage()
 
     def Update_Picture(self):
         self.pixmap = QtGui.QPixmap(self.map_file)
@@ -271,22 +270,27 @@ class MyWidget(QMainWindow, Ui_MainWindow):
             self.type = 'sat'
         elif self.Type_of_map.currentText() == 'Гибрид':
             self.type = 'sat,skl'
+        self.getImage()
 
     def getImage(self):
         api_server = "http://static-maps.yandex.ru/1.x/"
         params = {
             "ll": ",".join([self.lon, self.lat]),
             "z": self.z,
-            "l": self.type,
-            "apikey": "40d1649f-0493-4b70-98ba-98533de7710b"
+            "apikey": "40d1649f-0493-4b70-98ba-98533de7710b",
+            "l": self.type
         }
         response = requests.get(api_server, params=params)
         if not response:
             self.Picture_place.setText('Ошибка выполнения запроса')
-        self.map_file = "map.png"
+        if self.type == 'map':
+            self.map_file = "map.png"
+        else:
+            self.map_file = "map.jpg"
         with open(self.map_file, "wb") as file:
             file.write(response.content)
-        self.Update_Picture()
+        self.pixmap = QtGui.QPixmap(self.map_file)
+        self.Picture_place.setPixmap(self.pixmap)
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_D:
