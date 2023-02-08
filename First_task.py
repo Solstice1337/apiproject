@@ -1,9 +1,10 @@
 import sys
 
 import requests
-from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog
+
 from Dialog_Metka import Ui_Dialog
 from MainWindow_Map import Ui_MainWindow
 
@@ -43,6 +44,7 @@ class MyWidget(QMainWindow, Ui_MainWindow):
             self.z = self.lineEdit_4.text()
         else:
             self.z = '17'
+            self.distance = 1
         if self.Type_of_map.currentText() == 'Схема':
             self.type = 'map'
         elif self.Type_of_map.currentText() == 'Спутник':
@@ -72,13 +74,13 @@ class MyWidget(QMainWindow, Ui_MainWindow):
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_D:
-            self.lon = str(float(self.lon) + 1)
-        if event.key() == Qt.Key_A:
-            self.lon = str(float(self.lon) - 1)
-        if event.key() == Qt.Key_W:
-            self.lat = str(float(self.lat) + 1)
-        if event.key() == Qt.Key_S:
-            self.lat = str(float(self.lat) - 1)
+            self.lon = str(float(self.lon) + self.distance)
+        elif event.key() == Qt.Key_A:
+            self.lon = str(float(self.lon) - self.distance)
+        elif event.key() == Qt.Key_W:
+            self.lat = str(float(self.lat) + self.distance)
+        elif event.key() == Qt.Key_S:
+            self.lat = str(float(self.lat) - self.distance)
         if event.key() == Qt.Key_PageUp and int(self.z) < 17:
             self.z = str(int(self.z) + 1)
         if event.key() == Qt.Key_PageDown and int(self.z) > 0:
