@@ -264,7 +264,7 @@ class MyWidget(QMainWindow, Ui_MainWindow):
         if self.lineEdit_4.text() != '':
             self.z = self.lineEdit_4.text()
         else:
-            self.z = '14'
+            self.z = '17'
         if self.Type_of_map.currentText() == 'Схема':
             self.type = 'map'
         elif self.Type_of_map.currentText() == 'Спутник':
@@ -299,8 +299,8 @@ class MyWidget(QMainWindow, Ui_MainWindow):
             self.lat = str(float(self.lat) - 1)
         if event.key() == Qt.Key_PageUp:
             self.z = str(int(self.z) + 1)
-            if int(self.z) > 14:
-                self.z = '14'
+            if int(self.z) > 17:
+                self.z = '17'
         if event.key() == Qt.Key_PageDown:
             self.z = str(int(self.z) - 1)
             if int(self.z) < 0:
