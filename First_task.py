@@ -24,12 +24,12 @@ class MyWidget(QMainWindow, Ui_MainWindow):
         self.Coordinates()
 
     def Update_Picture(self):
-        self.pixmap = QPixmap(self.map_file)
-        self.Picture_place.setPixmap(self.pixmap)
+        pixmap = QPixmap(self.map_file)
+        self.Picture_place.setPixmap(pixmap)
 
     def Metka_Show(self):
-        self.program = Metka()
-        self.program.show()
+        program = Metka()
+        program.show()
 
     def Coordinates(self):
         if self.lineEdit.text() != '':
@@ -74,13 +74,37 @@ class MyWidget(QMainWindow, Ui_MainWindow):
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_D:
-            self.lon = str(float(self.lon) + self.distance)
+            if self.z != 1:
+                self.lon = str(
+                    float(self.lon) + (0.0064 * (2 ** (17 - int(self.z)))))
+            else:
+                self.lon = str(float(self.lon) + 0.0064)
+            if float(self.lon) > 179:
+                self.lon = '179'
         elif event.key() == Qt.Key_A:
-            self.lon = str(float(self.lon) - self.distance)
+            if self.z != 1:
+                self.lon = str(
+                    float(self.lon) - (0.0064 * (2 ** (17 - int(self.z)))))
+            else:
+                self.lon = str(float(self.lon) - 0.0064)
+            if float(self.lon) < -179:
+                self.lon = '-179'
         elif event.key() == Qt.Key_W:
-            self.lat = str(float(self.lat) + self.distance)
+            if self.z != 1:
+                self.lat = str(
+                    float(self.lat) + (0.0027 * (2 ** (17 - int(self.z)))))
+            else:
+                self.lat = str(float(self.lat) + 0.0027)
+            if float(self.lat) > 89:
+                self.lat = '89'
         elif event.key() == Qt.Key_S:
-            self.lat = str(float(self.lat) - self.distance)
+            if self.z != 1:
+                self.lat = str(
+                    float(self.lat) - (0.0027 * (2 ** (17 - int(self.z)))))
+            else:
+                self.lat = str(float(self.lat) - 0.0027)
+            if float(self.lat) < -89:
+                self.lat = '-89'
         if event.key() == Qt.Key_PageUp and int(self.z) < 17:
             self.z = str(int(self.z) + 1)
         if event.key() == Qt.Key_PageDown and int(self.z) > 0:

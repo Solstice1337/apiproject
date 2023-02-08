@@ -1,3 +1,4 @@
+# Файл с дизайном Главного окна
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 

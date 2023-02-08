@@ -1,3 +1,4 @@
+# Файл с дизайном окна добавления меток
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
