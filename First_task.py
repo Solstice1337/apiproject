@@ -3,23 +3,15 @@ import sys
 import requests
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog
+from PyQt5.QtWidgets import QApplication, QMainWindow
 
-from Dialog_Metka import Ui_Dialog
 from MainWindow_Map import Ui_MainWindow
-
-
-class Metka(QDialog, Ui_Dialog):
-    def __init__(self):
-        super().__init__()
-        self.setupUi(self)
-
 
 class MyWidget(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        self.pushButton.clicked.connect(self.Metka_Show)
+        self.pushButton.clicked.connect(self.getObject)
         self.pushButton_2.clicked.connect(self.New_Coordinates)
         self.lon = '37.530887'
         self.lat = '55.703118'
@@ -29,10 +21,6 @@ class MyWidget(QMainWindow, Ui_MainWindow):
     def Update_Picture(self):
         pixmap = QPixmap(self.map_file)
         self.Picture_place.setPixmap(pixmap)
-
-    def Metka_Show(self):
-        self.program = Metka()
-        self.program.show()
 
     def New_Coordinates(self):
         if self.lineEdit.text() != '':
@@ -97,8 +85,7 @@ class MyWidget(QMainWindow, Ui_MainWindow):
         event.accept()
 
     def getObject(self):
-        # тут надо добавить строку поисковую и ее результат записать в эту переменную
-        toponym_to_find = ' '.join()
+        toponym_to_find = self.lineEdit_3.text()
         geocoder_api_server = "http://geocode-maps.yandex.ru/1.x/"
 
         geocoder_params = {
@@ -114,14 +101,11 @@ class MyWidget(QMainWindow, Ui_MainWindow):
         toponym = json_response["response"]["GeoObjectCollection"][
             "featureMember"][0]["GeoObject"]
         toponym_coodrinates = toponym["Point"]["pos"]
-        toponym_longitude, toponym_lattitude = toponym_coodrinates.split(" ")
-
-        delta = "0.005"
-
+        self.lon, self.lat = toponym_coodrinates.split(" ")
         map_params = {
-            "ll": ",".join([toponym_longitude, toponym_lattitude]),
-            "spn": ",".join([delta, delta]),
-            "l": "map"
+            "ll": ",".join([self.lon, self.lat]),
+            "z": self.z,
+            "l": self.type
         }
 
         map_api_server = "http://static-maps.yandex.ru/1.x/"
