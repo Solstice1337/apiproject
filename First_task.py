@@ -20,30 +20,27 @@ class MyWidget(QMainWindow, Ui_MainWindow):
         super().__init__()
         self.setupUi(self)
         self.pushButton.clicked.connect(self.Metka_Show)
-        self.pushButton_2.clicked.connect(self.Coordinates)
-        self.Coordinates()
+        self.pushButton_2.clicked.connect(self.New_Coordinates)
+        self.lon = '37.530887'
+        self.lat = '55.703118'
+        self.z = '17'
+        self.New_Coordinates()
 
     def Update_Picture(self):
         pixmap = QPixmap(self.map_file)
         self.Picture_place.setPixmap(pixmap)
 
     def Metka_Show(self):
-        program = Metka()
-        program.show()
+        self.program = Metka()
+        self.program.show()
 
-    def Coordinates(self):
+    def New_Coordinates(self):
         if self.lineEdit.text() != '':
             self.lon = self.lineEdit.text()
-        else:
-            self.lon = '37.530887'
         if self.lineEdit_2.text() != '':
             self.lat = self.lineEdit_2.text()
-        else:
-            self.lat = '55.703118'
         if self.lineEdit_4.text() != '':
             self.z = self.lineEdit_4.text()
-        else:
-            self.z = '17'
         if self.Type_of_map.currentText() == 'Схема':
             self.type = 'map'
         elif self.Type_of_map.currentText() == 'Спутник':
