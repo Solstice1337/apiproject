@@ -40,7 +40,6 @@ class MyWidget(QMainWindow, Ui_MainWindow):
         json_response = response.json()
 
         organization = json_response["features"][0]
-        org_name = organization["properties"]["CompanyMetaData"]["name"]
         org_address = organization["properties"]["CompanyMetaData"]["address"]
 
         point = organization["geometry"]["coordinates"]
