@@ -56,6 +56,8 @@ class MyWidget(QMainWindow, Ui_MainWindow):
         map_api_server = "http://static-maps.yandex.ru/1.x/"
         response = requests.get(map_api_server, params=map_params)
 
+        self.lineEdit_6.setText(org_address)
+
         with open(self.map_file, "wb") as file:
             file.write(response.content)
         self.Update_Picture()
@@ -143,6 +145,7 @@ class MyWidget(QMainWindow, Ui_MainWindow):
         toponym = json_response["response"]["GeoObjectCollection"][
             "featureMember"][0]["GeoObject"]
         toponym_coodrinates = toponym["Point"]["pos"]
+        toponym_address = toponym["metaDataProperty"]["GeocoderMetaData"]["text"]
         self.lon, self.lat = toponym_coodrinates.split(" ")
         map_params = {
             "ll": ",".join([self.lon, self.lat]),
@@ -150,6 +153,8 @@ class MyWidget(QMainWindow, Ui_MainWindow):
             "l": self.type,
             "pt": "{0},ya_ru".format(",".join([self.lon, self.lat]))
         }
+
+        self.lineEdit_6.setText(toponym_address)
 
         map_api_server = "http://static-maps.yandex.ru/1.x/"
         response = requests.get(map_api_server, params=map_params)
