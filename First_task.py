@@ -5,19 +5,22 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QApplication, QMainWindow
 
-from MainWindow_Map import Ui_MainWindow
+from MainWindow_Map import Ui_API_PROJECT
 
-class MyWidget(QMainWindow, Ui_MainWindow):
+class MyWidget(QMainWindow, Ui_API_PROJECT):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        self.pushButton_3.clicked.connect(self.getObject)
-        self.pushButton_2.clicked.connect(self.New_Coordinates)
-        self.pushButton.clicked.connect(self.getOrganization)
         self.lon = '37.530887'
         self.lat = '55.703118'
         self.z = '17'
+        self.address = ''
+        self.index = 'индекс'
         self.New_Coordinates()
+        self.pushButton_3.clicked.connect(self.getObject)
+        self.pushButton_2.clicked.connect(self.New_Coordinates)
+        self.pushButton.clicked.connect(self.getOrganization)
+        self.checkBox.clicked.connect(self.Address_hide_or_show)
 
     def getOrganization(self):
         txt = self.lineEdit_5.text()
@@ -40,7 +43,8 @@ class MyWidget(QMainWindow, Ui_MainWindow):
         json_response = response.json()
 
         organization = json_response["features"][0]
-        org_address = organization["properties"]["CompanyMetaData"]["address"]
+        self.org_address = organization["properties"]["CompanyMetaData"]["address"]
+        self.address = self.org_address
 
         point = organization["geometry"]["coordinates"]
         self.lon, self.lat = point[0], point[1]
@@ -55,8 +59,6 @@ class MyWidget(QMainWindow, Ui_MainWindow):
         map_api_server = "http://static-maps.yandex.ru/1.x/"
         response = requests.get(map_api_server, params=map_params)
 
-        self.lineEdit_6.setText(org_address)
-
         with open(self.map_file, "wb") as file:
             file.write(response.content)
         self.Update_Picture()
@@ -64,6 +66,7 @@ class MyWidget(QMainWindow, Ui_MainWindow):
     def Update_Picture(self):
         pixmap = QPixmap(self.map_file)
         self.Picture_place.setPixmap(pixmap)
+        self.lineEdit_6.setText(self.address)
 
     def New_Coordinates(self):
         if self.lineEdit.text() != '':
@@ -144,7 +147,7 @@ class MyWidget(QMainWindow, Ui_MainWindow):
         toponym = json_response["response"]["GeoObjectCollection"][
             "featureMember"][0]["GeoObject"]
         toponym_coodrinates = toponym["Point"]["pos"]
-        toponym_address = toponym["metaDataProperty"]["GeocoderMetaData"]["text"]
+        self.toponym_address = toponym["metaDataProperty"]["GeocoderMetaData"]["text"]
         self.lon, self.lat = toponym_coodrinates.split(" ")
         map_params = {
             "ll": ",".join([self.lon, self.lat]),
@@ -153,7 +156,7 @@ class MyWidget(QMainWindow, Ui_MainWindow):
             "pt": "{0},ya_ru".format(",".join([self.lon, self.lat]))
         }
 
-        self.lineEdit_6.setText(toponym_address)
+        self.address = self.toponym_address
 
         map_api_server = "http://static-maps.yandex.ru/1.x/"
         response = requests.get(map_api_server, params=map_params)
@@ -161,6 +164,12 @@ class MyWidget(QMainWindow, Ui_MainWindow):
         with open(self.map_file, "wb") as file:
             file.write(response.content)
         self.Update_Picture()
+
+    def Address_hide_or_show(self):
+        if self.checkBox.isChecked():
+            self.lineEdit_6.setText(f'{self.address}, {self.index}')
+        else:
+            self.lineEdit_6.setText(self.address)
 
 
 if __name__ == '__main__':
